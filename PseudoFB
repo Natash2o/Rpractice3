@@ -1,0 +1,203 @@
+#Data Analysis for One Variable with R- Pseudo Facebook. 99,0003 rows/observations and 15 variables. Running analysis 
+to understand user's behavior and user demographics. Natasha Iyer 
+
+getwd()
+list.files()
+pf <- read.csv('pseudo_facebook.tsv', sep = '\t')
+names(pf)
+
+
+install.packages('ggplot2')
+library(ggplot2)
+
+names(pf)
+
+qplot(x = dob_day, data=pf)
+
+qplot(x = dob_day, data= pf) +
+  scale_x_discrete(breaks=1:31)+
+  facet_wrap(~dob_month, ncol=3)
+
+names(pf)
+qplot(x=friend_count, data=pf)
+
+qplot(x = friend_count, data=pf, xlim = c(0,1000))
+
+qplot(x=friend_count, data=pf, binwidth=25)+
+  scale_x_continuous(limits=c(0,1000), breaks=seq(0, 1000, 50))
+
+qplot(x = friend_count, data = pf, binwidth = 10) +
+  scale_x_continuous(limits = c(0, 1000),
+                     breaks = seq(0, 1000, 50))
+
+
+qplot(x=friend_count, data=pf, binwidth=25)+
+  scale_x_continuous(limits = c(0,1000), breaks = seq(0, 1000, 50))+
+facet_wrap(~gender)
+
+qplot(x=friend_count, data= subset(pf, !is.na(gender)), binwidth=25)+
+  scale_x_continuous(limits = c(0,1000), breaks = seq(0, 1000, 50))+
+  facet_wrap(~gender)
+
+
+table(pf$gender)
+by(pf$friend_count, pf$gender, summary)
+
+names(pf)
+qplot(x=tenure, data=pf)
+
+qplot(x=tenure, data=pf, binwidth=30)
+
+qplot(x=tenure, data=pf, binwidth=30, color= I('black'), fill=I('#099DD9'))
+
+
+qplot(x= tenure/365, data=pf, binwidth=.25, 
+      color= I('black'), fill= I('#F79420')) +
+    scale_x_continuous(breaks = seq(1, 7, 1), limits= c(0,7))
+
+qplot(x= tenure/365, data=pf,  xlab = 'Number of years using Facebook', ylab= 'Number of users in sample', 
+      color= I('black'), fill= I('#F79420')) +
+    scale_x_continuous(breaks = seq(1, 7, 1), limits= c(0,7))
+
+names(pf)
+
+qplot(x=age, data=pf)
+
+qplot(x=age, data=pf, binwidth=1)
+
+qplot(x=age, data=pf, binwidth=1, xlab= 'User Age', ylab= 'Number of Users in Sample', color=I('black'), fill=I('#e0b3e5'))+
+  scale_x_continuous(breaks=seq(5, 110, 10))
+
+install.packages('gridExtra') 
+library(gridExtra) 
+
+qplot(x=friend_count, data=pf)
+
+summary(pf$friend_count)
+
+summary(log10(pf$friend_count))
+
+summary(log10(pf$friend_count + 1))
+
+summary(sqrt(pf$friend_count))
+
+a <- qplot(x=friend_count, data=pf)
+
+b <- qplot(x= log10(friend_count), data=pf)
+
+c <- qplot(x= sqrt(friend_count), data=pf)
+    
+
+grid.arrange(a, b, c, ncol=3)
+
+grid.arrange(a, b, c, ncol=1)
+
+
+qplot(x=friend_count, data=pf)+
+  scale_x_log10()
+
+qplot(x=friend_count, data=pf)+
+  scale_x_sqrt()
+
+
+qplot(x=friend_count, data= subset(pf, !is.na(gender)), binwidth=10)+
+  scale_x_continuous(lim=c(0,1000), breaks= seq(0,1000, 50))+
+  facet_wrap(~gender)
+
+
+#y= ..count../sum(..count..) proportions instead of actual raw counts
+qplot(x=friend_count, y= ..count../sum(..count..), 
+      data= subset(pf, !is.na(gender)), 
+      xlab='Friend Count',
+      ylab='Proportion of Users with that Friend Count',
+      binwidth=10, geom= 'freqpoly'  
+      , color=gender)+
+  scale_x_continuous(lim=c(0,1000), breaks= seq(0,1000, 50))
+
+```{r Likes on the Web}
+names(pf)
+
+qplot(x=www_likes, data=pf)
+
+qplot(x=www_likes, data= subset(pf, !is.na(gender)), binwidth=10)+
+  scale_x_continuous(lim=c(0,1000), breaks= seq(0,1000, 50))+
+  facet_wrap(~gender)
+
+qplot(x=www_likes, data=subset(pf, !is.na(gender)), geom='freqpoly', color= gender)
+
+qplot(x=www_likes, data=subset(pf, !is.na(gender)), geom='freqpoly', color= gender)+
+  scale_x_continuous()+
+  scale_x_log10()
+
+qplot(x=www_likes, y= ..count../sum(..count..), 
+      data= subset(pf, !is.na(gender)), 
+      xlab='Number of Likes on WWW',
+      ylab='Proportion of Users with WWW Likes',
+      binwidth=10, geom= 'freqpoly'  
+      , color=gender)+
+  scale_x_continuous(lim=c(0,1000), breaks= seq(0,1000, 50))
+  
+
+summary(pf$www_likes)
+
+summary(log10(pf$www_likes))
+
+summary(sqrt(pf$www_likes))
+
+qplot(x=gender, y=friend_count, 
+      data=subset(pf, !is.na(gender)), 
+      geom='boxplot')
+
+qplot(x=gender, y=friend_count,
+      data=subset(pf, !is.na(gender)),
+      geom='boxplot', ylim = c(0,1000))
+
+qplot(x=gender, y=friend_count, 
+      data=subset(pf, !is.na(gender)), 
+      geom='boxplot')+
+  scale_y_continuous(lim=c(0,1000))
+
+qplot(x=gender, y=friend_count, 
+      data=subset(pf, !is.na(gender)), 
+      geom='boxplot')+
+  coord_cartesian(ylim=c(0,1000))
+
+by(pf$friend_count, pf$gender, sum)
+
+by(pf$friend_count, pf$gender, summary)
+
+names(pf)
+
+
+qplot(x=gender, y=friendships_initiated, 
+      data=subset(pf, !is.na(gender)), 
+      geom='boxplot')
+
+qplot(x=gender, y=friendships_initiated,
+      data=subset(pf, !is.na(gender)),
+      geom='boxplot', ylim = c(0,500))
+
+
+qplot(x=gender, y=friendships_initiated, 
+      data=subset(pf, !is.na(gender)), 
+      geom='boxplot')+
+  coord_cartesian(ylim=c(0,150))
+
+by(pf$friendships_initiated, pf$gender, summary)
+
+by(pf$friendships_initiated, pf$gender, sum)
+
+names(pf)
+
+summary(pf$mobile_likes)
+
+summary(pf$mobile_likes >0)
+
+mobile_check_in <- NA
+pf$mobile_check_in  <- ifelse (pf$mobile_likes > 0,1,0)
+pf$mobile_check_in <- factor (pf$mobile_check_in)
+summary(pf$mobile_check_in)
+
+sum(pf$mobile_check_in ==1)/length(pf$mobile_check_in)
+
+#roughly 65% which is over half of users in dataset which makes sense to continue with development of mobile experience.
